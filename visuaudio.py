@@ -16,10 +16,10 @@ class AudioStream():
         self.traces = set()
 
         # pyaudio setup
-        self.FORMAT = pyaudio.paInt16
-        self.CHANNELS = 1
-        self.RATE = 44100
-        self.CHUNK = 1024
+        self.FORMAT = pyaudio.paInt16  # bytes / sample
+        self.CHANNELS = 1  # mono sound
+        self.RATE = 44100  # samples / sec (44.1 kHz)
+        self.CHUNK = 1024  # how much audio processed / frame -- set smaller for higher frame rate
 
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(
@@ -84,14 +84,15 @@ class AudioStream():
         self.audio_plot.addItem(self.bargraph)
 
     def update(self):
-        """get sound data and manipulate for plotting"""
+        """get sound data and manipulate for plotting using fft"""
         # get and unpack waveform data
         wf_data = self.stream.read(self.CHUNK, exception_on_overflow=False)
-        wf_data = struct.unpack(str(2 * self.CHUNK) + 'B', wf_data)
-        # generate spectrum data for plotting
-        sp_data = fft(np.array(wf_data, dtype='int8') - 128)
-        sp_data = np.abs(sp_data[0:int(self.CHUNK / 2)]
-                         ) * 2 / (128 * self.CHUNK)
+        wf_data = struct.unpack(str(2 * self.CHUNK) + 'B', wf_data)  # 2 * self.CHUNK :: wf_data 2x len of CHUNK -- wf_data range(0, 255)
+        # generate spectrum data for plotting using fft (fast fourier transform)
+        sp_data = fft(np.array(wf_data, dtype='int8') - 128)  # - 128 :: any int less than 127 will wrap around to 256 down
+        # np.abs (below) converts complex num in fft to real magnitude
+        sp_data = np.abs(sp_data[0:int(self.CHUNK)]  # slice: slice first half of our fft
+                         ) * 2 / (256 * self.CHUNK)  # rescale: mult 2, div amp waveform and no. freq in your spectrum
         sp_data[sp_data <= 0.001] = 0
         self.set_plotdata(name='spectrum', data_x=self.f, data_y=sp_data)
 
