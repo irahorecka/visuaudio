@@ -82,7 +82,7 @@ class AudioStream:
             )
         self.audio_plot.addItem(self.graph)
 
-    # Scatter Plot Graph
+    # Scatter Graph
     def set_plotdata_2(self, name, data_x, data_y):
         data_y = data_y[:64]
         if name in self.traces:
