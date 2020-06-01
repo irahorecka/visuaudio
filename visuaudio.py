@@ -13,8 +13,9 @@ class AudioStream:
     """stream audio from input source (mic) and continuously
     plot (bar) based on audio spectrum from waveform data"""
 
-    def __init__(self):
+    def __init__(self, num):
         self.traces = set()
+        self.number = num
 
         # pyaudio setup
         self.FORMAT = pyaudio.paInt16  # bytes / sample
@@ -46,8 +47,8 @@ class AudioStream:
         self.audio_plot.showGrid(x=True, y=True)
         self.audio_plot.hideAxis("bottom")
         self.audio_plot.hideAxis("left")
-        # bargraph init
-        self.bargraph = None
+        # graph init
+        self.graph = None
 
     @staticmethod
     def set_gradient_brush():
@@ -65,22 +66,48 @@ class AudioStream:
 
         return brush
 
-    def set_plotdata(self, name, data_x, data_y):
+    # Bar Graph
+    def set_plotdata_1(self, name, data_x, data_y):
         """set plot with init and new data -- reference
         self.traces to verify init or recurring data input"""
         if name in self.traces:
             # update bar plot content
-            self.bargraph.setOpts(x=data_x, height=data_y, width=350)
+            self.graph.setOpts(x=data_x, height=data_y, width=350)
         else:
             self.traces.add(name)
             # initial setup of bar plot
             brush = self.set_gradient_brush()
-            self.bargraph = pg.BarGraphItem(
-                x=data_x, height=data_y, width=350, brush=brush, pen=(0, 0, 0)
+            self.graph = pg.BarGraphItem(
+                x=data_x, height=data_y, width=50, brush=brush, pen=(0, 0, 0)
             )
-        self.audio_plot.addItem(self.bargraph)
+        self.audio_plot.addItem(self.graph)
+
+    # Scatter Graph
+    def set_plotdata_2(self, name, data_x, data_y):
+        """set plot with init and new data -- reference
+        self.traces to verify init or recurring data input"""
+        data_y = data_y[:64]
+        if name in self.traces:
+            # update bar plot content
+            self.graph.clear()
+            self.graph.setData(data_x, data_y)
+        else:
+            self.traces.add(name)
+            # initial setup of bar plot
+            # brush = self.set_gradient_brush()
+            self.graph = pg.ScatterPlotItem(
+                x=data_x, y=data_y, pen=None, symbol='d', size=30, brush=(100, 100, 255, 100)
+            )
+        self.audio_plot.addItem(self.graph)
 
     def update(self):
+        """update plot by number which user chose"""
+        if self.number == 1:  # Bar Graph
+            self.set_plotdata_1(name="spectrum", data_x=self.f, data_y=self.calculate_data())
+        elif self.number == 2:  # Scatter Graph
+            self.set_plotdata_2(name="spectrum", data_x=self.f, data_y=self.calculate_data())
+
+    def calculate_data(self):
         """get sound data and manipulate for plotting using fft"""
         # get and unpack waveform data
         wf_data = self.stream.read(self.CHUNK, exception_on_overflow=False)
@@ -93,12 +120,12 @@ class AudioStream:
         )  # - 128 :: any int less than 127 will wrap around to 256 down
         # np.abs (below) converts complex num in fft to real magnitude
         sp_data = (
-            np.abs(sp_data[0 : int(self.CHUNK)])  # slice: slice first half of our fft
-            * 2
-            / (256 * self.CHUNK)
+                np.abs(sp_data[0:int(self.CHUNK)])  # slice: slice first half of our fft
+                * 2
+                / (256 * self.CHUNK)
         )  # rescale: mult 2, div amp waveform and no. freq in your spectrum
         sp_data[sp_data <= 0.001] = 0
-        self.set_plotdata(name="spectrum", data_x=self.f, data_y=sp_data)
+        return sp_data
 
     @staticmethod
     def start():
@@ -112,9 +139,16 @@ class AudioStream:
         timer = QtCore.QTimer()
         timer.timeout.connect(self.update)
         timer.start(20)
+        # self.update()
         self.start()
 
 
 if __name__ == "__main__":
-    AUDIO_APP = AudioStream()
+    print("Choose number and type.")
+    print("-" * 20)
+    print("1: Bar Graph")
+    print("2: Scatter Graph")
+    print("-" * 20)
+    number = int(input("Type:"))
+    AUDIO_APP = AudioStream(number)
     AUDIO_APP.animation()

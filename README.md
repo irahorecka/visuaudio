@@ -1,5 +1,6 @@
 # visuaudio
 ### A fun GUI application to visualize audio spectrum
+<b>https://github.com/irahorecka/visuaudio</b>
 
 ```visuaudio.py``` uses the ```pyqtgraph``` and ```pyaudio``` libraries to view the audio spectrum of input sound.
 <hr>
@@ -18,8 +19,14 @@
 </p>
 <b>Notes:</b>
 <ul>
-<li>Ensure you have a working input sound source.</li>
+<li>Ensure you have a working input sound source.(ex. Mic)</li>
 <li>Run the application on your native terminal (i.e. not iTerm2, etc.)</li>
 <li>On MacOS, you will have to grant Terminal permission to use the input sound source.</li>
-<li>Windows, Linux..?
+<li>Linux..?
 </ul>
+
+<b>Windows</b>
+1) Go link: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio<br>
+2) You should download <b>'PyAudio-0.2.11-cp{your python version}-cp{your python version}m-win_amd64.whl'</b><br>
+3) ```$ pip install PyAudio-0.2.11-cp37-cp37m-win_amd64.whl``` </li>
+
