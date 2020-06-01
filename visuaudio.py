@@ -82,21 +82,33 @@ class AudioStream:
             )
         self.audio_plot.addItem(self.graph)
 
-    # Scatter Graph
+    # Scatter Plot Graph
     def set_plotdata_2(self, name, data_x, data_y):
-        """set plot with init and new data -- reference
-        self.traces to verify init or recurring data input"""
         data_y = data_y[:64]
         if name in self.traces:
-            # update bar plot content
+            # update scatter plot content
             self.graph.clear()
             self.graph.setData(data_x, data_y)
         else:
             self.traces.add(name)
-            # initial setup of bar plot
-            # brush = self.set_gradient_brush()
+            # initial setup of scatter plot
             self.graph = pg.ScatterPlotItem(
                 x=data_x, y=data_y, pen=None, symbol='d', size=30, brush=(100, 100, 255, 100)
+            )
+        self.audio_plot.addItem(self.graph)
+
+    # Curve Graph
+    def set_plotdata_3(self, name, data_x, data_y):
+        data_y = data_y[:64]
+        if name in self.traces:
+            # update curve plot content
+            self.graph.clear()
+            self.graph.setData(data_x, data_y)
+        else:
+            self.traces.add(name)
+            # initial setup of curve plot
+            self.graph = pg.PlotCurveItem(
+                x=data_x, y=data_y, pen='w', shadowPen='r',
             )
         self.audio_plot.addItem(self.graph)
 
@@ -106,6 +118,8 @@ class AudioStream:
             self.set_plotdata_1(name="spectrum", data_x=self.f, data_y=self.calculate_data())
         elif self.number == 2:  # Scatter Graph
             self.set_plotdata_2(name="spectrum", data_x=self.f, data_y=self.calculate_data())
+        elif self.number == 3:  # Scatter Graph
+            self.set_plotdata_3(name="spectrum", data_x=self.f, data_y=self.calculate_data())
 
     def calculate_data(self):
         """get sound data and manipulate for plotting using fft"""
@@ -144,11 +158,12 @@ class AudioStream:
 
 
 if __name__ == "__main__":
-    print("Choose number and type.")
+    print("Choose and type number.")
     print("-" * 20)
     print("1: Bar Graph")
     print("2: Scatter Graph")
+    print("3: Curve Graph")
     print("-" * 20)
-    number = int(input("Type:"))
+    number = int(input("Graph Type:"))
     AUDIO_APP = AudioStream(number)
     AUDIO_APP.animation()
