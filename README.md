@@ -1,12 +1,3 @@
-# 2020-1-OSS Team 10
-### **Team**
-팀장: 서주원<br>
-팀원: 주원규, 장병우, 이지영, 김광원
-
-<br>
-<br>
-<br>
-
 # visuaudio
 ### A fun GUI application to visualize audio spectrum
 <b>https://github.com/irahorecka/visuaudio</b>
