@@ -44,8 +44,9 @@
 #### You can change color of graph in running.
 - ↑,→,←: R,G,B += 10
 - F1 ~ F9: White ~ Pink
-                                                                                               
-<b>Notes:</b>
+<br>
+
+## Notes:
 <ul>
 <li>Ensure you have a working input sound source.(ex. Mic)</li>
 <li>Run the application on your native terminal (i.e. not iTerm2, etc.)</li>
