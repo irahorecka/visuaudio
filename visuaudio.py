@@ -10,7 +10,6 @@ from scipy.fftpack import fft
 from pynput.keyboard import Listener, Key
 
 
-
 class AudioStream:
     """stream audio from input source (mic) and continuously
     plot (bar) based on audio spectrum from waveform data"""
@@ -125,6 +124,7 @@ class AudioStream:
                 x=data_x, y=data_y, pen='r',
             )
         self.audio_plot.addItem(self.graph)
+
     # Line Graph    
     def set_plotdata_4(self, name, data_x, data_y):
         data_y = data_y[:64]
@@ -182,57 +182,57 @@ class AudioStream:
         if (sys.flags.interactive != 1) or not hasattr(QtCore, "PYQT_VERSION"):
             QtGui.QApplication.instance().exec_()
 
-    def changeColor(self,key):
+    def change_color(self,key):
         """change color in curve graph after start"""
         """
             white : 255,255,255     red : 255, 0, 0       orange : 255, 106, 0
             yellow : 255, 255, 0   green : 0, 255, 0    skyblue : 0, 255, 255
             blue : 0, 0, 255      purple: 166, 0, 255   pink : 255, 0, 255
         """
-        self.colorIndexControl()
+        self.color_index_control()
         try:
-            if (key == Key.up):                             #red higher
-                AUDIO_APP.a['color_x']=self.a['colorIndex_x']
-                self.a['colorIndex_x']+=10
-            elif (key == Key.right):                        #green higher
-                AUDIO_APP.a['color_y'] =self.a['colorIndex_y']
-                self.a['colorIndex_y']+=10
-            elif (key == Key.left):                         #blue higher
-                AUDIO_APP.a['color_z'] =self.a['colorIndex_z']
-                self.a['colorIndex_z']+=10
-            elif(key==Key.f1):                              #white
-                self.a['colorIndex_x']= 255
-                self.a['colorIndex_y'] =255
-                self.a['colorIndex_z'] =255
-            elif (key == Key.f2):                           #red
+            if key == Key.up:                             #red higher
+                AUDIO_APP.a['color_x'] = self.a['colorIndex_x']
+                self.a['colorIndex_x'] += 10
+            elif key == Key.right:                        #green higher
+                AUDIO_APP.a['color_y'] = self.a['colorIndex_y']
+                self.a['colorIndex_y'] += 10
+            elif key == Key.left:                         #blue higher
+                AUDIO_APP.a['color_z'] = self.a['colorIndex_z']
+                self.a['colorIndex_z'] += 10
+            elif key == Key.f1:                              #white
                 self.a['colorIndex_x'] = 255
-                self.a['colorIndex_y'] =0
+                self.a['colorIndex_y'] = 255
+                self.a['colorIndex_z'] = 255
+            elif key == Key.f2:                           #red
+                self.a['colorIndex_x'] = 255
+                self.a['colorIndex_y'] = 0
                 self.a['colorIndex_z'] = 0
-            elif (key == Key.f3):                           #orange
+            elif key == Key.f3:                           #orange
                 self.a['colorIndex_x'] = 255
                 self.a['colorIndex_y'] = 106
                 self.a['colorIndex_z'] = 0
-            elif (key == Key.f4):                           #yellow
+            elif key == Key.f4:                           #yellow
                 self.a['colorIndex_x'] = 255
                 self.a['colorIndex_y'] = 255
                 self.a['colorIndex_z'] = 0
-            elif (key == Key.f5):                           #green
+            elif key == Key.f5:                           #green
                 self.a['colorIndex_x'] = 0
                 self.a['colorIndex_y'] = 255
                 self.a['colorIndex_z'] = 0
-            elif (key == Key.f6):                           #skyblue
+            elif key == Key.f6:                           #skyblue
                 self.a['colorIndex_x'] = 0
                 self.a['colorIndex_y'] = 255
                 self.a['colorIndex_z'] = 255
-            elif (key == Key.f7):                           #blue
+            elif key == Key.f7:                           #blue
                 self.a['colorIndex_x'] = 0
                 self.a['colorIndex_y'] = 0
                 self.a['colorIndex_z'] = 255
-            elif (key == Key.f8):                           #purple
+            elif key == Key.f8:                           #purple
                 self.a['colorIndex_x'] = 166
                 self.a['colorIndex_y'] = 0
                 self.a['colorIndex_z'] = 255
-            elif (key == Key.f9):                           #pink
+            elif key == Key.f9:                           #pink
                 self.a['colorIndex_x'] = 255
                 self.a['colorIndex_y'] = 0
                 self.a['colorIndex_z'] = 255
@@ -240,13 +240,13 @@ class AudioStream:
         except:
             pass
 
-    def colorIndexControl(self):
-        if(self.a['colorIndex_x']>=255):
-            self.a['colorIndex_x']=0
-        if(self.a['colorIndex_y']>=255):
-            self.a['colorIndex_y']=0
-        if(self.a['colorIndex_z']>=255):
-            self.a['colorIndex_z']=0
+    def color_index_control(self):
+        if self.a['colorIndex_x'] >= 255:
+            self.a['colorIndex_x'] = 0
+        if self.a['colorIndex_y'] >= 255:
+            self.a['colorIndex_y'] = 0
+        if self.a['colorIndex_z'] >= 255:
+            self.a['colorIndex_z'] = 0
 
     def animation(self):
         """call self.start and self.update for continuous
@@ -256,19 +256,21 @@ class AudioStream:
         timer.start(20)
         # self.update()
         self.start()
-        
-def InttoSymbol(symbol):
-    if symbol==1:
+
+
+def int_to_symbol(symbol):
+    if symbol == 1:
         sym = 'd'
-    elif symbol==2:
+    elif symbol == 2:
         sym = 'o'
-    elif symbol==3:
+    elif symbol == 3:
         sym = 'x'
-    elif symbol==4:
+    elif symbol == 4:
         sym = 't'
-    elif symbol==5:
+    elif symbol == 5:
         sym = 's'
     return sym
+
 
 if __name__ == "__main__":
     print("Choose and type number.")
@@ -297,8 +299,8 @@ if __name__ == "__main__":
         symbol = int(input("Symbol:"))
         while symbol<1 or symbol>5:
             symbol = int(input("Out of range! try again:"))
-        symbol = InttoSymbol(symbol)
+        symbol = int_to_symbol(symbol)
     AUDIO_APP = AudioStream(number,symbol)
-    with Listener(on_press=AUDIO_APP.changeColor) as listener:
+    with Listener(on_press=AUDIO_APP.change_color) as listener:
         AUDIO_APP.animation()
     listener.join()
