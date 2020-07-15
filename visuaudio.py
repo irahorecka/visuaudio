@@ -146,9 +146,6 @@ class AudioStream:
                 style=QtCore.Qt.DashLine,
             )
             self.graph.setData(data_x, data_y, pen=pen1, shadowPen="#19070B")
-            """self.graph = pg.PlotCurveItem(
-                x=data_x, y=data_y, pen=self.a['pen'], shadowPen=self.a['shadowPen'],
-            )"""
         else:
             pen1 = pg.mkPen(color=(250, 0, 0), width=15, style=QtCore.Qt.DashLine)
             self.traces.add(name)
@@ -231,8 +228,8 @@ class AudioStream:
                     self.a["colorIndex_y"],
                     self.a["colorIndex_z"],
                 ) = color_index.get(key)
-        except:
-            pass
+        except Exception as error:
+            print(error)
 
     def color_index_control(self):
         for color_rgb in ("colorIndex_x", "colorIndex_y", "colorIndex_z"):
@@ -255,7 +252,7 @@ def int_to_symbol(symbol):
 
 
 if __name__ == "__main__":
-    # commonly used user messages -------------------
+    # commonly used cout messages -------------------
     line_break = "-" * 20
     out_of_range = "Out of range! try again: "
     # -----------------------------------------------
