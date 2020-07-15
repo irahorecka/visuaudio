@@ -158,22 +158,16 @@ class AudioStream:
 
     def update(self):
         """update plot by number which user chose"""
-        if self.number == 1:  # Bar Graph
-            self.set_plotdata_1(
-                name="spectrum", data_x=self.f, data_y=self.calculate_data()
-            )
-        elif self.number == 2:  # Scatter Graph
-            self.set_plotdata_2(
-                name="spectrum", data_x=self.f, data_y=self.calculate_data()
-            )
-        elif self.number == 3:  # Curve Graph
-            self.set_plotdata_3(
-                name="spectrum", data_x=self.f, data_y=self.calculate_data()
-            )
-        elif self.number == 4:  # Line Graph
-            self.set_plotdata_4(
-                name="spectrum", data_x=self.f, data_y=self.calculate_data()
-            )
+        plot_data = {
+            1: self.set_plotdata_1,
+            2: self.set_plotdata_2,
+            3: self.set_plotdata_3,
+            4: self.set_plotdata_4,
+        }
+
+        plot_data.get(self.number)(
+            name="spectrum", data_x=self.f, data_y=self.calculate_data()
+        )
 
     def calculate_data(self):
         """get sound data and manipulate for plotting using fft"""
@@ -208,7 +202,19 @@ class AudioStream:
             yellow : 255, 255, 0   green : 0, 255, 0    skyblue : 0, 255, 255
             blue : 0, 0, 255      purple: 166, 0, 255   pink : 255, 0, 255
         """
+        color_index = {
+            Key.f1: (255, 255, 255),  # white
+            Key.f2: (255, 0, 0),  # red
+            Key.f3: (255, 106, 255),  # orange
+            Key.f4: (255, 255, 0),  # yellow
+            Key.f5: (0, 255, 0),  # green
+            Key.f6: (0, 255, 255),  # skyblue
+            Key.f7: (0, 0, 255),  # blue
+            Key.f8: (166, 0, 255),  # purple
+            Key.f9: (255, 0, 255),  # pink
+        }
         self.color_index_control()
+
         try:
             if key == Key.up:  # red higher
                 AUDIO_APP.a["color_x"] = self.a["colorIndex_x"]
@@ -219,53 +225,19 @@ class AudioStream:
             elif key == Key.left:  # blue higher
                 AUDIO_APP.a["color_z"] = self.a["colorIndex_z"]
                 self.a["colorIndex_z"] += 10
-            elif key == Key.f1:  # white
-                self.a["colorIndex_x"] = 255
-                self.a["colorIndex_y"] = 255
-                self.a["colorIndex_z"] = 255
-            elif key == Key.f2:  # red
-                self.a["colorIndex_x"] = 255
-                self.a["colorIndex_y"] = 0
-                self.a["colorIndex_z"] = 0
-            elif key == Key.f3:  # orange
-                self.a["colorIndex_x"] = 255
-                self.a["colorIndex_y"] = 106
-                self.a["colorIndex_z"] = 0
-            elif key == Key.f4:  # yellow
-                self.a["colorIndex_x"] = 255
-                self.a["colorIndex_y"] = 255
-                self.a["colorIndex_z"] = 0
-            elif key == Key.f5:  # green
-                self.a["colorIndex_x"] = 0
-                self.a["colorIndex_y"] = 255
-                self.a["colorIndex_z"] = 0
-            elif key == Key.f6:  # skyblue
-                self.a["colorIndex_x"] = 0
-                self.a["colorIndex_y"] = 255
-                self.a["colorIndex_z"] = 255
-            elif key == Key.f7:  # blue
-                self.a["colorIndex_x"] = 0
-                self.a["colorIndex_y"] = 0
-                self.a["colorIndex_z"] = 255
-            elif key == Key.f8:  # purple
-                self.a["colorIndex_x"] = 166
-                self.a["colorIndex_y"] = 0
-                self.a["colorIndex_z"] = 255
-            elif key == Key.f9:  # pink
-                self.a["colorIndex_x"] = 255
-                self.a["colorIndex_y"] = 0
-                self.a["colorIndex_z"] = 255
-
+            else:
+                (
+                    self.a["colorIndex_x"],
+                    self.a["colorIndex_y"],
+                    self.a["colorIndex_z"],
+                ) = color_index.get(key)
         except:
             pass
 
     def color_index_control(self):
-        if self.a["colorIndex_x"] >= 255:
-            self.a["colorIndex_x"] = 0
-        if self.a["colorIndex_y"] >= 255:
-            self.a["colorIndex_y"] = 0
-        if self.a["colorIndex_z"] >= 255:
-            self.a["colorIndex_z"] = 0
+        for color_rgb in ("colorIndex_x", "colorIndex_y", "colorIndex_z"):
+            if self.a[color_rgb] >= 255:
+                self.a[color_rgb] = 0
 
     def animation(self):
         """call self.start and self.update for continuous
@@ -273,52 +245,56 @@ class AudioStream:
         timer = QtCore.QTimer()
         timer.timeout.connect(self.update)
         timer.start(20)
-        # self.update()
         self.start()
 
 
 def int_to_symbol(symbol):
-    if symbol == 1:
-        sym = "d"
-    elif symbol == 2:
-        sym = "o"
-    elif symbol == 3:
-        sym = "x"
-    elif symbol == 4:
-        sym = "t"
-    elif symbol == 5:
-        sym = "s"
-    return sym
+    symbol_to_char = {1: "d", 2: "o", 3: "x", 4: "t", 5: "s"}
+
+    return symbol_to_char.get(symbol)
 
 
 if __name__ == "__main__":
+    # commonly used user messages -------------------
+    line_break = "-" * 20
+    out_of_range = "Out of range! try again: "
+    # -----------------------------------------------
+
     print("Choose and type number.")
-    print("-" * 20)
+    print(line_break)
     print("1: Bar Graph")
     print("2: Scatter Graph")
     print("3: Curve Graph")
     print("4: Line Graph")
     print("5: quit")
-    print("-" * 20)
-    number = int(input("Graph Type:"))
-    while number < 1 or number > 5:
-        number = int(input("Out of range! try again:"))
-    if number == 5:
-        exit()
-    symbol = "o"
+    print(line_break)
+    symbol = "o"  # default symbol to instantiate AudioStream class
+    number_input = input("Graph Type: ")
+    while True:
+        try:
+            number = int(number_input)
+            if number >= 1 and number <= 5:
+                break
+        except ValueError:  # i.e. not a number
+            pass
+        number_input = input(out_of_range)
+
     if number == 2:
         print("Choose symbol")
-        print("-" * 20)
+        print(line_break)
         print("1: Diamond")
         print("2: Circular")
         print("3: Cross")
         print("4: Triangular")
         print("5: Square")
-        print("-" * 20)
-        symbol = int(input("Symbol:"))
+        print(line_break)
+        symbol = int(input("Symbol: "))
         while symbol < 1 or symbol > 5:
-            symbol = int(input("Out of range! try again:"))
+            symbol = int(input(out_of_range))
         symbol = int_to_symbol(symbol)
+    elif number == 5:
+        exit()
+
     AUDIO_APP = AudioStream(number, symbol)
     with Listener(on_press=AUDIO_APP.change_color) as listener:
         AUDIO_APP.animation()
