@@ -1,7 +1,17 @@
+flake8==3.8.3
+importlib-metadata==1.7.0
+mccabe==0.6.1
 numpy==1.18.3
 PyAudio==0.2.11
+pycodestyle==2.6.0
+pyflakes==2.2.0
 pynput==1.6.8
+pyobjc-core==6.2
+pyobjc-framework-Cocoa==6.2
+pyobjc-framework-Quartz==6.2
 PyQt5==5.14.2
 PyQt5-sip==12.7.2
 pyqtgraph==0.10.0
 scipy==1.4.1
+six==1.15.0
+zipp==3.1.0
